@@ -6,7 +6,7 @@
 #    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2023/12/05 18:56:43 by JFikents         ###   ########.fr        #
+#    Updated: 2023/12/09 15:45:00 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,11 +21,9 @@ LIBS_D = libft/
 DEBUGGER = debugger/
 
 NAME = pipex
-MAIN =
 TEST =
 A_FILE = libft.a
-C_FILES = src/pipex.c src/pipex_utils.c src/pipex_exec_cmd.c
-BONUS_FILES =
+C_FILES = src/pipex.c src/pipex_utils.c src/pipex_exec_cmd.c src/pipex_errors.c\
 
 .PHONY: clean fclean re all c
 
@@ -63,17 +61,16 @@ fclean: clean
 re: fclean all
 
 debug: c a_files
-	@$(CC) $(ADD) $(CFLAGS) $(H_FILE) $(C_FILES) $(MAIN) *.a
+	@$(CC) $(ADD) $(CFLAGS) $(C_FILES) *.a
 	@mv a.out.dSYM $(DEBUGGER)
 	@mv a.out $(DEBUGGER)
 	@mv *.a $(DEBUGGER)
 	@make fclean
 
 test: c
-	@$(CC) $(ADD) $(CFLAGS) $(H_FILE) $(TEST)
+	@$(CC) $(ADD) $(CFLAGS) $(TEST)
 	@mv a.out.dSYM $(DEBUGGER)
 	@mv a.out $(DEBUGGER)
-	@mv *.gch $(DEBUGGER)
 	@make fclean
 
 c: fclean
