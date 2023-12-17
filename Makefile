@@ -6,53 +6,81 @@
 #    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2023/12/09 15:45:00 by JFikents         ###   ########.fr        #
+#    Updated: 2023/12/17 22:10:38 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+# * ---------------------- AVOID CHANGES IN THIS AREA ---------------------- * #
+LIB = ar rcs
 RM = rm -rf
 CC = cc
 CALLMAKE = make -C
-CFLAGS = -Wall -Wextra -Werror -Iheaders/ -Ilibft/h_files
-ADD = -fsanitize=address -g
-OBJ+ = $(C_FILES:.c=.o) $(BONUS_FILES:.c=.o)
-OBJ = $(C_FILES:.c=.o)
-LIBS_D = libft/
-DEBUGGER = debugger/
+OBJ = $(addprefix $(SRC_DIR), $(C_FILES:.c=.o))
+OBJ+ = $(addprefix $(SRC_DIR), $(BONUS_FILES:.c=.o))
+SRC = $(addprefix $(SRC_DIR), $(C_FILES))
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address\
+$(addprefix -I, $(H_FILES_DIR))
+ADD = -fsanitize=address -g \
+$(addprefix -L, $(LIBRERIES_DIR))\
+$(addprefix -l, $(subst lib,,$(subst /,,$(LIBRERIES_DIR))))
+#_----------------------------------------------------------------------------_#
 
+# ? -------------------------- DO YOU HAVE BONUS? -------------------------- ? #
+# If you have bonus, change the value of the variable BONUS to 1 and add the
+# bonus files to the variable BONUS_FILES
+BONUS = 0
+BONUS_FILES = 
+# If it compiles together with the rest of the files, change the value of the
+# variable COMPILE_TOGETHER to 1
+COMPILE_TOGETHER = 0
+#_----------------------------------------------------------------------------_#
+
+# ? --------------------------- IS IT A PROGRAM? --------------------------- ? #
+# If it is a program, change the value of the variable PROGRAM to 1 and make
+# sure that you have int main(void) in your one of files in C_FILES
+PROGRAM = 1
+
+#_----------------------------------------------------------------------------_#
+
+# * --------------------------- CHANGE THIS AREA --------------------------- * #
 NAME = pipex
-TEST =
-A_FILE = libft.a
-C_FILES = src/pipex.c src/pipex_utils.c src/pipex_exec_cmd.c src/pipex_errors.c\
+H_FILES_DIR = headers/ libft/h_files/
+LIBRERIES_DIR = libft/
+TMP_FILE = tmpfile.tmp
+RESULT_FILE = 
+SRC_DIR = src/
+C_FILES = pipex.c pipex_utils.c pipex_exec_cmd.c pipex_errors.c\
+pipex_exec_utils.c
+#_----------------------------------------------------------------------------_#
 
-.PHONY: clean fclean re all c
+# * ----------------------------- BASIC RULES ----------------------------- * #
 
+.PHONY: clean fclean re all c aclean tclean bonus debug test
+
+ifeq ($(BONUS), 1)
+ifeq ($(COMPILE_TOGETHER), 1)
+all: bonus
+else
+all: $(NAME) bonus
+endif
+else
 all: $(NAME)
+endif
 
-bonus: $(OBJ+) a_files
-	@$(CC) -o $@ $(OBJ+)
-
+ifeq ($(PROGRAM), 1)
+$(NAME) : $(OBJ) a_files
+	@echo "	Compiling $@..."
+	@$(CC) -o $@ $(OBJ) $(CFLAGS) $(ADD)
+else
 $(NAME) : $(OBJ) a_files
 	@echo "	Compiling $(NAME)..."
-	@$(CC) -o $@ $< *.a
-	@make clean
+	@$(LIB) $(NAME) $(OBJ) $(ADD)
+endif
 
-a_files: $(LIBS_D)
-	@for dir in $(LIBS_D); do \
-		echo "	Compiling $$dir..."; \
-		$(CALLMAKE) $$dir; \
-	done
-
-%.o : %.c 
-	@echo "	Compiling $@..."
-	@$(CC) $(CFLAGS) -c -o $@ $<
-
-clean:
+clean: aclean tclean
 	@echo "	Cleanig traces..."
 	@echo "	Ereasing Files .o"
-	@$(RM) $(OBJ+)
-	@echo "	Ereasing Files .a"
-	@$(RM) *.a
+	@$(RM) $(OBJ+) $(OBJ)
 
 fclean: clean
 	@echo "	Ereasing $(NAME)..."
@@ -60,19 +88,82 @@ fclean: clean
 
 re: fclean all
 
-debug: c a_files
-	@$(CC) $(ADD) $(CFLAGS) $(C_FILES) *.a
-	@mv a.out.dSYM $(DEBUGGER)
-	@mv a.out $(DEBUGGER)
-	@mv *.a $(DEBUGGER)
-	@make fclean
+a_files: $(LIBRERIES_DIR)
+	@for dir in $(LIBRERIES_DIR); do \
+		echo "	Compiling $$dir..."; \
+		$(CALLMAKE) $$dir; \
+	done
 
-test: c
-	@$(CC) $(ADD) $(CFLAGS) $(TEST)
-	@mv a.out.dSYM $(DEBUGGER)
-	@mv a.out $(DEBUGGER)
-	@make fclean
+%.o : %.c
+	@echo "	Compiling $@..."
+	@$(CC) $(CFLAGS) -c -o $@ $<
+
+#_----------------------------------------------------------------------------_#
+
+# * ----------------------------- DEBUG AREA ------------------------------ * #
+
+# To debug your program, just call the rule debug
+# It will compile your program with the flag -g and move the executable to the
+# folder DEBUGGER
+DEBUGGER = debugger/
+
+# If you want to test your program, but just some files, add them to the
+# variable TEST and use the rule test
+TEST =
 
 c: fclean
 	@$(RM) $(DEBUGGER)* 
 	@$(RM) *.out *.dSYM *.gch 
+	@$(RM) $(RESULT_FILE) $(TMP_FILE)
+
+debug: c a_files
+	@$(CC) $(CFLAGS) $(SRC) $(ADD)
+	@mv a.out.dSYM $(DEBUGGER)
+	@mv a.out $(DEBUGGER)
+	@make fclean
+
+test: c
+	@$(CC) $(CFLAGS) $(TEST) $(ADD)
+	@mv a.out.dSYM $(DEBUGGER)
+	@mv a.out $(DEBUGGER)
+	@make fclean
+
+#_----------------------------------------------------------------------------_#
+
+# * ----------------------------- EXTRA RULES ----------------------------- * #
+
+aclean: $(LIBRERIES_DIR)
+	@for dir in $(subst /,,$(LIBRERIES_DIR)); do \
+		echo "	Ereasing $$dir..."; \
+		$(CALLMAKE) $$dir fclean; \
+	done
+
+tclean:
+	@if [ -f $(RESULT_FILE) ]; then \
+		echo "	Ereasing $(RESULT_FILE)"; \
+		$(RM) $(RESULT_FILE); \
+	fi
+	@if [ -f $(TMP_FILE) ]; then \
+		echo "	Ereasing $(TMP_FILE)"; \
+		$(RM) $(TMP_FILE); \
+	fi
+
+#_----------------------------------------------------------------------------_#
+
+# * ----------------------------- BONUS RULES ----------------------------- * #
+
+ifeq ($(BONUS), 1)
+ifeq ($(COMPILE_TOGETHER), 1)
+bonus: $(OBJ+) $(OBJ) a_files
+	@echo "	Compiling $(NAME) with bonus..."
+	@$(CC) -o $(NAME) $< $(OBJ) $(CFLAGS) $(ADD)
+	@make clean
+endif
+else
+bonus: $(OBJ+) a_files
+	@echo "	Compiling $(NAME)_bonus..."
+	@$(CC) -o $(NAME)_bonus $< $(CFLAGS) $(ADD)
+	@make clean
+endif
+
+#_----------------------------------------------------------------------------_#
