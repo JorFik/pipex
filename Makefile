@@ -6,7 +6,7 @@
 #    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2023/12/18 00:17:57 by JFikents         ###   ########.fr        #
+#    Updated: 2023/12/18 00:20:25 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -68,11 +68,11 @@ all: $(NAME)
 endif
 
 ifeq ($(PROGRAM), 1)
-$(NAME) : $(OBJ) a_files
+$(NAME) : a_files $(OBJ)
 	@echo "	Compiling $@..."
 	@$(CC) -o $@ $(OBJ) $(CFLAGS) $(ADD)
 else
-$(NAME) : $(OBJ) a_files
+$(NAME) : a_files $(OBJ)
 	@echo "	Compiling $(NAME)..."
 	@$(LIB) $(NAME) $(OBJ) $(ADD)
 endif
