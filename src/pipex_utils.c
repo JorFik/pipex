@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 19:11:46 by JFikents          #+#    #+#             */
-/*   Updated: 2023/12/17 19:59:53 by JFikents         ###   ########.fr       */
+/*   Updated: 2023/12/17 22:56:17 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ int	free_n_close(t_fd_argvs *fd, t_flags flags)
 		unlink(TMP_FILE);
 	if (fd->argvs)
 		free_argvs(fd);
-	check_out = ft_close(fd->out);
-	if (ft_close(fd->in) == -1)
+	check_out = ft_close(&fd->out);
+	if (ft_close(&fd->in) == -1)
 	{
 		if (check_out == -1)
 			perror("Error closing both fds");
@@ -58,14 +58,14 @@ int	free_n_close(t_fd_argvs *fd, t_flags flags)
 
 void	setup_out_pipe(int p_fd[2], t_fd_argvs *fd, t_flags flags)
 {
-	ft_close(p_fd[PIPE_READ]);
+	ft_close(&p_fd[PIPE_READ]);
 	errors(dup2(p_fd[PIPE_WRITE], STDOUT_FILENO), "Error dup2 out", fd, flags);
-	ft_close(p_fd[PIPE_WRITE]);
+	ft_close(&p_fd[PIPE_WRITE]);
 }
 
 void	setup_in_pipe(int p_fd[2], t_fd_argvs *fd, t_flags flags)
 {
-	ft_close(p_fd[PIPE_WRITE]);
+	ft_close(&p_fd[PIPE_WRITE]);
 	errors(dup2(p_fd[PIPE_READ], STDIN_FILENO), "Error dup2 in", fd, flags);
-	ft_close(p_fd[PIPE_READ]);
+	ft_close(&p_fd[PIPE_READ]);
 }
