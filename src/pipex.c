@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 18:54:08 by JFikents          #+#    #+#             */
-/*   Updated: 2023/12/17 23:25:45 by JFikents         ###   ########.fr       */
+/*   Updated: 2023/12/18 01:53:49 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	init_fd(t_fd_argvs *fd, int argc, char *argv[], t_flags *flag)
 		here_doc = get_here_doc(fd, argc, argv, flag);
 		errors(write(fd->in, here_doc, ft_strlen(here_doc)), "Error writing",
 			fd, *flag);
-		errors(ft_close(&fd->in), "Error closing TMP_FILE", fd, *flag);
+		errors(ft_close(fd->in), "Error closing TMP_FILE", fd, *flag);
 		ft_free_n_null((void **) &here_doc);
 		errors(fd->in = open(TMP_FILE, O_RDONLY), "Error re-open", fd, *flag);
 		fd->out = open(argv[argc - 1], O_WRONLY | O_CREAT | O_APPEND, 0666);
@@ -67,8 +67,8 @@ void	init_fd(t_fd_argvs *fd, int argc, char *argv[], t_flags *flag)
 
 void	setup_out_file(int pipe[2], t_fd_argvs *fd, t_flags flags)
 {
-	errors(ft_close(&pipe[PIPE_READ]), "Error closing pipe read", fd, flags);
-	errors(ft_close(&pipe[PIPE_WRITE]), "Error closing pipe write", fd, flags);
+	errors(ft_close(pipe[PIPE_READ]), "Error closing pipe read", fd, flags);
+	errors(ft_close(pipe[PIPE_WRITE]), "Error closing pipe write", fd, flags);
 	errors(dup2(fd->out, STDOUT_FILENO), "Error dup2 out", fd, flags);
 }
 
