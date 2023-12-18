@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 19:11:46 by JFikents          #+#    #+#             */
-/*   Updated: 2023/12/17 22:56:17 by JFikents         ###   ########.fr       */
+/*   Updated: 2023/12/18 00:39:59 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,14 @@ int	free_n_close(t_fd_argvs *fd, t_flags flags)
 
 void	setup_out_pipe(int p_fd[2], t_fd_argvs *fd, t_flags flags)
 {
-	ft_close(&p_fd[PIPE_READ]);
+	errors(ft_close(&p_fd[PIPE_READ]), "Error close() read out", fd, flags);
 	errors(dup2(p_fd[PIPE_WRITE], STDOUT_FILENO), "Error dup2 out", fd, flags);
-	ft_close(&p_fd[PIPE_WRITE]);
+	errors(ft_close(&p_fd[PIPE_WRITE]), "Error close() write out", fd, flags);
 }
 
 void	setup_in_pipe(int p_fd[2], t_fd_argvs *fd, t_flags flags)
 {
-	ft_close(&p_fd[PIPE_WRITE]);
+	errors(ft_close(&p_fd[PIPE_WRITE]), "Error close() write in", fd, flags);
 	errors(dup2(p_fd[PIPE_READ], STDIN_FILENO), "Error dup2 in", fd, flags);
-	ft_close(&p_fd[PIPE_READ]);
+	errors(ft_close(&p_fd[PIPE_READ]), "Error close() read in", fd, flags);
 }

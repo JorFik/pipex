@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 19:04:08 by JFikents          #+#    #+#             */
-/*   Updated: 2023/12/17 21:16:53 by JFikents         ###   ########.fr       */
+/*   Updated: 2023/12/18 00:30:41 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	exec_cmd(int argv_i, t_fd_argvs *fd, t_flags flags)
 
 	errors(pipe(p_fd), "Error creating pipe for cmd", fd, flags);
 	if (argv_i == 0)
-		dup2(fd->in, STDIN_FILENO);
+		errors(dup2(fd->in, STDIN_FILENO), "Error dup2 cmd 1", fd, flags);
 	pid = fork();
 	errors(pid, "Error creating fork for cmd", fd, flags);
 	if (pid == 0)
