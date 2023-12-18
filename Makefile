@@ -6,7 +6,7 @@
 #    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2023/12/18 00:20:25 by JFikents         ###   ########.fr        #
+#    Updated: 2023/12/18 16:39:12 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,11 +28,11 @@ $(addprefix -l, $(subst lib,,$(subst /,,$(LIBRERIES_DIR))))
 # ? -------------------------- DO YOU HAVE BONUS? -------------------------- ? #
 # If you have bonus, change the value of the variable BONUS to 1 and add the
 # bonus files to the variable BONUS_FILES
-BONUS = 0
+BONUS = 1
 BONUS_FILES = 
 # If it compiles together with the rest of the files, change the value of the
 # variable COMPILE_TOGETHER to 1
-COMPILE_TOGETHER = 0
+COMPILE_TOGETHER = 1
 #_----------------------------------------------------------------------------_#
 
 # ? --------------------------- IS IT A PROGRAM? --------------------------- ? #
@@ -47,7 +47,7 @@ NAME = pipex
 H_FILES_DIR = headers/ libft/h_files/
 LIBRERIES_DIR = libft/
 TMP_FILE = tmpfile.tmp
-RESULT_FILE = 
+RESULT_FILE = result.txt
 SRC_DIR = src/
 C_FILES = pipex.c pipex_utils.c pipex_exec_cmd.c pipex_errors.c\
 pipex_exec_utils.c
@@ -55,7 +55,7 @@ pipex_exec_utils.c
 
 # * ----------------------------- BASIC RULES ----------------------------- * #
 
-.PHONY: clean fclean re all c aclean tclean bonus debug test
+.PHONY: clean fclean re all c aclean tclean bonus debug test a_files
 
 ifeq ($(BONUS), 1)
 ifeq ($(COMPILE_TOGETHER), 1)
@@ -155,15 +155,15 @@ tclean:
 
 ifeq ($(BONUS), 1)
 ifeq ($(COMPILE_TOGETHER), 1)
-bonus: $(OBJ+) $(OBJ) a_files
+bonus: a_files $(OBJ+) $(OBJ)
 	@echo "	Compiling $(NAME) with bonus..."
-	@$(CC) -o $(NAME) $< $(OBJ) $(CFLAGS) $(ADD)
+	@$(CC) -o $(NAME) $(OBJ+) $(OBJ) $(CFLAGS) $(ADD)
 	@make clean
 endif
 else
-bonus: $(OBJ+) a_files
+bonus: a_files $(OBJ+)
 	@echo "	Compiling $(NAME)_bonus..."
-	@$(CC) -o $(NAME)_bonus $< $(CFLAGS) $(ADD)
+	@$(CC) -o $(NAME)_bonus $(OBJ+) $(CFLAGS) $(ADD)
 	@make clean
 endif
 
